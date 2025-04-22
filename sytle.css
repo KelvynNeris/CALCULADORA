@@ -63,13 +63,25 @@ html, body, section{
     background-color: #3B3B3B;
 }
 
+.botoes .numero:hover{
+    background-color: #323232;
+}
+
 .botoes .operador{
     background-color: #323232;
+}
+
+.botoes .operador:hover{
+    background-color: #3B3B3B;
 }
 
 .botoes .igual{
     background-color: #595959;
     color: black;
+}
+
+.botoes .igual:hover{
+    background-color: #616161;
 }
 
 .botoes p{
@@ -81,4 +93,5 @@ html, body, section{
     justify-content: center;
     border-radius: 0.3rem;
     font-size: 1.3rem;
+    cursor: default;
 }
