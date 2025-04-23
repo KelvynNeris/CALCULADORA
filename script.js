@@ -7,12 +7,23 @@ const igual = document.querySelector(".igual");
 let expressao = "";
 let expressao_calc = "";
 let entradaAtual = "";
+let resultadoFinalizado = false;
+let resultadoAnterior = "";
 
 // Quando clica em um número
 numeros.forEach(numero => {
     numero.addEventListener("click", () => {
-        entradaAtual += numero.textContent; // adiciona o número atual
-        resultado.textContent = entradaAtual; // mostra na tela do resultado
+        if (resultadoFinalizado) {
+            expressao = "";
+            expressao_calc = "";
+            conta.textContent = "";
+            resultado.textContent = "0";
+            entradaAtual = "";
+            resultadoFinalizado = false; // desbloqueia o uso de '='
+        }
+
+        entradaAtual += numero.textContent;
+        resultado.textContent = entradaAtual;
     });
 });
 
@@ -21,6 +32,15 @@ operadores.forEach(operador => {
     operador.addEventListener("click", () => {
         const op = operador.textContent;
 
+        if (resultadoFinalizado) {
+            expressao = resultadoAnterior.toString();
+            expressao_calc = resultadoAnterior.toString();
+            conta.textContent = expressao;
+            entradaAtual = "";
+            resultadoFinalizado = false;
+        }
+        
+        
         if (op === "C") {
             conta.textContent = "";
             resultado.textContent = "0";
@@ -48,27 +68,24 @@ operadores.forEach(operador => {
             return;
         }
 
-        // trata a vírgula ANTES de mexer com a expressão
+        // Trata a vírgula apenas visualmente, sem tocar na expressao_calc
         if (op === ",") {
             if (!entradaAtual.includes(",")) {
                 entradaAtual += ",";
-                const ponto = entradaAtual.replace(",", ".");
-                expressao_calc = ponto
                 resultado.textContent = entradaAtual;
             }
-            return; // impede que o código abaixo execute
+            return;
         }
 
-
-        // Se for um operador normal (+, -, *, /, etc.)
         if (entradaAtual) {
+            const entradaParaCalculo = entradaAtual.replace(",", ".");
             expressao += entradaAtual + op;
-            expressao_calc += entradaAtual + op;
+            expressao_calc += entradaParaCalculo + op;
             conta.textContent = expressao;
-            conta.textContent = expressao_calc;
             entradaAtual = "";
             resultado.textContent = "0";
         }
+
 
         if (op === "×") {
             expressao_calc = expressao_calc.slice(0, -1)
@@ -119,6 +136,14 @@ operadores.forEach(operador => {
             expressao_calc += "/100";
         }
 
+        else if (op === "+") {
+            conta.textContent = expressao
+        }
+
+        else if (op === "-") {
+            conta.textContent = expressao
+        }
+
         else {
             expressao += op;
         }
@@ -128,18 +153,30 @@ operadores.forEach(operador => {
 });
 
 igual.addEventListener("click", () => {
+    if (resultadoFinalizado) {
+        console.error("Não permitido. Já foi clicado em '='.");
+        return;
+    }
+
     const sinal = igual.textContent;
 
     if (sinal === "=") {
         expressao += entradaAtual;
         expressao_calc += entradaAtual;
-        conta.textContent = expressao + "="
-        console.log(expressao, expressao_calc)
+        conta.textContent = expressao + "=";
+        console.log(expressao, expressao_calc);
 
-        const res = eval(expressao_calc);
-        resultado.textContent = res;
+        try {
+            const res = eval(expressao_calc);
+            resultado.textContent = res;
+            resultadoAnterior = res; // Salva o resultado para o próximo cálculo
+            console.log(`res=${resultadoAnterior}`)
+            resultadoFinalizado = true; // bloqueia novo clique até nova operação
+        } catch (e) {
+            console.error("Erro na expressão:", e);
+            resultado.textContent = "Erro";
+        }
 
-        expressao = "";
-        expressao_calc = "";
+        entradaAtual = "";
     }
 });
