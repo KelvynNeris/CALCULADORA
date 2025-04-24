@@ -205,6 +205,7 @@ operadores.forEach(operador => {
                 porcentagem = match[0] / 100;
                 expressao = expressao.slice(0, expressao.length - match[0].length);
                 expressao += porcentagem;
+                resultado.textContent = porcentagem
             }
 
             expressao_calc = expressao_calc.slice(0, -1);
@@ -239,7 +240,7 @@ igual.addEventListener("click", () => {
 
     if (sinal === "=") {
         // Verifica se entradaAtual está vazia ou termina com uma vírgula
-        if (entradaAtual === "" || entradaAtual === "," || entradaAtual.endsWith(",")) {
+        if (entradaAtual === "," || entradaAtual.endsWith(",")) {
             alert("Escreva um número válido.");
             return; // Impede o cálculo de prosseguir
         }
