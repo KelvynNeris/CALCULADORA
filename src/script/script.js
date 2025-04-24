@@ -38,6 +38,11 @@ operadores.forEach(operador => {
 
         // Se o '=' foi pressionado antes, reinicia usando o resultado anterior
         if (resultadoFinalizado) {
+            // Bloqueia a vírgula após o resultado finalizado
+            if (op === ",") {
+                return; // Impede a vírgula de ser clicada após o resultado
+            }
+
             expressao = resultadoAnterior.toString();
             expressao_calc = resultadoAnterior.toString();
             entradaAtual = "";
@@ -84,10 +89,6 @@ operadores.forEach(operador => {
                 case "CE":
                 case "⌫":
                     return; // Não faz nada nesses casos ao continuar depois de "="
-                case ",":
-                    expressao += ",";
-                    expressao_calc += ".";
-                    break;
                 default:
                     expressao += op;
                     expressao_calc += op;
@@ -161,13 +162,16 @@ operadores.forEach(operador => {
         // Raiz quadrada
         else if (op === "√") {
             expressao = expressao.slice(0, -1)
-            let ultimoCaractere = expressao.slice(-1)
-            expressao = expressao.slice(0, -1)
-            expressao += `√(${ultimoCaractere})`;
+            const match = expressao.match(/[\d.]+$/); // Último número
+            ultimoNumero = match[0];
+            expressao = expressao.slice(0, expressao.length - match[0].length);
+            expressao += `√(${ultimoNumero})`;
             conta.textContent = expressao
-
-            expressao_calc = expressao_calc.slice(0, -2)
-            expressao_calc += `${Math.sqrt(ultimoCaractere)}`;
+            
+            expressao_calc = expressao_calc.slice(0, -1)
+            expressao_calc = expressao_calc.slice(0, expressao_calc.length - match[0].length);
+            expressao_calc += `${Math.sqrt(ultimoNumero)}`;
+            console.log(expressao_calc)
         }
 
         // Quadrado
@@ -234,6 +238,13 @@ igual.addEventListener("click", () => {
     const sinal = igual.textContent;
 
     if (sinal === "=") {
+        // Verifica se entradaAtual está vazia ou termina com uma vírgula
+        if (entradaAtual === "" || entradaAtual === "," || entradaAtual.endsWith(",")) {
+            alert("Escreva um número válido.");
+            return; // Impede o cálculo de prosseguir
+        }
+
+        // Adiciona a entrada atual e substitui vírgula por ponto na expressão de cálculo
         expressao += entradaAtual;
         expressao_calc += entradaAtual.replace(",", ".");
         conta.textContent = expressao + "=";
@@ -248,6 +259,7 @@ igual.addEventListener("click", () => {
             resultado.textContent = "Erro";
         }
 
+        console.log(expressao_calc)
         entradaAtual = "";
     }
 });

@@ -11,7 +11,7 @@ html, body, section{
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: white;
+    background: url(/src/img/fundo.jpg);
 }
 
 .calculadora-cont{
